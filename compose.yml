@@ -19,10 +19,15 @@ services:
     build:
       context: mcp-proxy
       dockerfile: Dockerfile
+    environment:
+      PUPPETEER_LAUNCH_OPTIONS: "{\"headless\": true, \"args\": [\"--no-sandbox\"]}"
+      ALLOW_DANGEROUS: true
+      DISPLAY: ${DISPLAY}
     command: |
       --pass-environment --host=0.0.0.0 --port=8096 --allow-origin=*
       --transport=sse
-      -- uvx mcp-server-fetch --ignore-robots-txt --user-agent='${FETCH_USER_AGENT}'
+      --named-server fetch 'uvx mcp-server-fetch --ignore-robots-txt --user-agent "${FETCH_USER_AGENT}"'
+      --named-server puppeteer 'node /home/puppeteer-mcp/dist/index.js'
 
   ollama-mcp-bridge:
     container_name: ollama-mcp-bridge
