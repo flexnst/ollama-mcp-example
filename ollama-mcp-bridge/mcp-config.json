@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "fetch": {
+      "sse_url": "http://mcp-proxy:8096/sse"
+    }
+  }
+}

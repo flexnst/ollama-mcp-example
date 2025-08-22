@@ -1,0 +1,57 @@
+services:
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:latest
+    restart: always
+    volumes:
+      - ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+  mcp-proxy:
+    container_name: mcp-proxy
+    image: mcp-proxy:latest
+    build:
+      context: mcp-proxy
+      dockerfile: Dockerfile
+    command: |
+      --pass-environment --host=0.0.0.0 --port=8096 --allow-origin=*
+      --transport=sse
+      -- uvx mcp-server-fetch --ignore-robots-txt --user-agent='${FETCH_USER_AGENT}'
+
+  ollama-mcp-bridge:
+    container_name: ollama-mcp-bridge
+    image: flexnst/ollama-mcp-bridge:latest
+    restart: unless-stopped
+    depends_on:
+      - ollama
+      - mcp-proxy
+    environment:
+      - CORS_ORIGINS=*
+    command: uv run ollama-mcp-bridge --ollama-url http://ollama:11434 --config /usr/src/app/mcp-servers-config/mcp-config.json
+    volumes:
+      - ./ollama-mcp-bridge:/usr/src/app/mcp-servers-config
+
+  open-webui:
+    container_name: open-webui
+    image: ghcr.io/open-webui/open-webui:main
+    restart: unless-stopped
+    volumes:
+      - open-webui:/app/backend/data
+    depends_on:
+      - ollama-mcp-bridge
+    ports:
+      - '${OPEN_WEBUI_PORT:-3000}:8080'
+    environment:
+      OLLAMA_BASE_URL: http://ollama-mcp-bridge:8000
+      ENABLE_AUTOCOMPLETE_GENERATION: false
+      WEBUI_SECRET_KEY: ''
+
+volumes:
+  ollama:
+  open-webui:
