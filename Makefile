@@ -2,7 +2,7 @@ init:
 	[ ! -f .env ] && cp .env.example .env; \
 	docker compose up -d --build
 
-up:
+up: down
 	docker compose up -d
 
 down:
