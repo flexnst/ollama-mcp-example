@@ -8,6 +8,8 @@ up:
 down:
 	docker compose down
 
+restart: down up
+
 ollama-cli:
 	docker compose exec ollama bash
 

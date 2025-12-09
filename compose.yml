@@ -3,6 +3,9 @@ services:
     container_name: ollama
     image: ollama/ollama:latest
     restart: unless-stopped
+    environment:
+      OLLAMA_HOST: '0.0.0.0'
+      OLLAMA_ORIGINS: '*'
     volumes:
       - ollama:/root/.ollama
     deploy:
