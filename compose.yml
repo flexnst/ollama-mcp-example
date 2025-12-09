@@ -26,8 +26,9 @@ services:
       context: mcp-proxy
       dockerfile: Dockerfile
     environment:
-      PUPPETEER_LAUNCH_OPTIONS: "{\"headless\": true, \"args\": [\"--no-sandbox\"]}"
+      PUPPETEER_LAUNCH_OPTIONS: "{\"headless\": true}"
       ALLOW_DANGEROUS: true
+      DOCKER_CONTAINER: true
       DISPLAY: ${DISPLAY}
     command: |
       --pass-environment --host=0.0.0.0 --port=8096 --allow-origin=*
