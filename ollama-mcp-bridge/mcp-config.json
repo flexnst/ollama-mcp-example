@@ -1,7 +1,10 @@
 {
   "mcpServers": {
     "fetch": {
-      "sse_url": "http://mcp-proxy:8096/sse"
+      "sse_url": "http://mcp-proxy:8096/servers/fetch/sse"
+    },
+    "puppeteer": {
+      "sse_url": "http://mcp-proxy:8096/servers/puppeteer/sse"
     }
   }
 }
